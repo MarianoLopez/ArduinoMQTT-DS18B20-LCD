@@ -96,7 +96,7 @@ void loop() {
 
 /*if mqtt client is not connected will try to connect with @mqtt_client, @mqtt_user & @mqtt_password*/
 void connectToMqtt(){
-  if (!client.connected()) {
+  if (!client.connected() || client.state()!=MQTT_CONNECTED) {
     toLog("Connecting mqtt... ");
     client.connect(mqtt_client,mqtt_user,mqtt_password);
     String mqttStatus = getMqttStatus();
@@ -108,7 +108,7 @@ void connectToMqtt(){
 /*send @temperature to @topic if mqtt client is connected else will try to connect once*/
 void toMqttTopic(const float temperature, const char* topic){
   connectToMqtt();
-  if(client.connected()){
+  if(client.connected() && client.state()==MQTT_CONNECTED){
     char buffer[10];
     dtostrf(temperature,2, 2, buffer);// converts the double value passed in val into an ASCII
     toLogln("sending: ("+String(buffer)+") to: '"+topic+"' topic");
