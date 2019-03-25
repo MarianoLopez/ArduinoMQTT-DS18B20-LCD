@@ -1,22 +1,24 @@
 package com.z.mqttservice.service
 
 import org.eclipse.paho.client.mqttv3.MqttMessage
-import org.springframework.http.codec.ServerSentEvent
+import org.slf4j.Logger
+import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
 import reactor.core.publisher.EmitterProcessor
-import java.time.LocalDateTime
+import reactor.core.scheduler.Schedulers
 
 @Service
 class StreamService {
-    private val emitter =  EmitterProcessor.create<ServerSentEvent<MqttMessage>>()
+    var logger: Logger = LoggerFactory.getLogger(StreamService::class.java)
+    private val emitter =  EmitterProcessor.create<MqttMessage>()
 
-    fun subscribe() = emitter.log()
+    fun subscribe() = emitter
+            .subscribeOn(Schedulers.parallel())
+            .doOnSubscribe { logger.info("New subscription $it") }
+            .doOnError { logger.error("doOnError: ${it.localizedMessage}") }
 
     fun publish(message:MqttMessage){
-        emitter.onNext(ServerSentEvent.builder<MqttMessage>().apply {
-            data(message)
-            id(LocalDateTime.now().toString())
-            event("new message")
-        }.build())
+        //logger.info("EmitterProcessor.onNext: $message")
+        emitter.onNext(message)
     }
 }

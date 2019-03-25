@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+	<head>
+		<meta charset="UTF-8">
+		<title>MQTT to SSE</title>
+		<link rel="stylesheet" href="/css/materialize.min.css"/>
+		<script src="/js/vue.js"></script>
+	</head>
+	<body>
+	<div id="app" class="container" >
+		<div class="row">
+			<div class="col s8 m5 l4 offset-m4 offset-l4">
+				<div class="card">
+					<div class="card-image">
+						<img src="/temp.png" class="responsive-img" style="padding: 10px;">
+					</div>
+					<div class="card-action center-align">
+						<h5>Temperatura</h5>
+						<p class="green-text text-darken-2">{{temperature}} °C</p>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+	</body>
+	<script type="text/javascript">
+        var app = new Vue({
+            el: '#app',
+            data: {
+                temperature:0
+            },
+            created: function(){
+                let self = this;
+                if(typeof(EventSource) !== "undefined") {
+                    var source = new EventSource("http://localhost:8080/api/sse");
+                    source.onmessage = function(event) {
+                        const json = JSON.parse(event.data);
+                        //console.log(json);
+                        self.temperature = Number(json.payload);
+                    };
+                    source.onopen = function (event) {
+                        console.log("open",event.currentTarget.url);
+                    }
+                } else {
+                    alert("tu navegador no admite SSE");
+                }
+            }
+        });
+	</script>
+</html>

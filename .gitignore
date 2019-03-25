@@ -1,4 +1,5 @@
 arduino/arduino_secrets.h
+nodemcu/temperatureMQTT/secrets.h
 # Prerequisites
 *.d
 
