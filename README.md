@@ -14,7 +14,7 @@
 # MQTT - Service listener
 A spring boot w/kotlin-maven project that runs on port 8080
 - Listens to the MQTT topic & publish the messages to a SSE (ServerSentEvent) stream.
-- The root end-point "/": has a simple dashboard with Vue.js & MaterializeCss to display then temperature stream.
+- The root end-point "/": has a simple dashboard with Vue.js & MaterializeCss to display the temperature stream.
 - Rest end-points: 
         - GET /api/sse = consume SSE stream
         - GET /api/publish/{topic}/{data} = publish {data} in {topic} through MQTT
